@@ -1,0 +1,59 @@
+// 1. Configuration de base
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String  
+  createdAt DateTime @default(now())
+  hashedRefreshToken String?
+  createdChannels Channel[]       @relation("ChannelCreator") 
+  memberships     ChannelMember[] 
+  messages        Message[]       
+}
+
+model Channel {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  theme     String? 
+  img       String?
+  createdAt DateTime @default(now())
+  
+  creatorId Int
+  creator   User @relation("ChannelCreator", fields: [creatorId], references: [id])
+
+  members  ChannelMember[] 
+  messages Message[]      
+}
+
+model ChannelMember {
+  joinedAt DateTime @default(now())
+  role     String   @default("member") 
+
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  channelId Int
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@id([userId, channelId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  authorId  Int
+  author    User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  channelId Int
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+}
