@@ -77,6 +77,7 @@ export class AuthService {
     pass: string,
   ): Promise<Omit<User, 'password' | 'hashedRefreshToken'> | null> {
     const user = await this.usersService.findOne(username);
+    console.log('tried to login');
     if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user;
       return result;
