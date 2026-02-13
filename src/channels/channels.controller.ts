@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { ChannelsService } from './channels.service';
 import { ChannelDto, MessageDto, ThemeDto } from '../common/dto/channel.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import type { RequestWithUser } from '../common/types/express';
 
 @ApiTags('Channels')
