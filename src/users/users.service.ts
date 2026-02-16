@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from '../common/dto/login.dto';
@@ -33,8 +29,7 @@ export class UsersService {
       return result;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002')
-          throw new ConflictException('Ce pseudo est déjà pris');
+        if (error.code === 'P2002') throw new ConflictException('Ce pseudo est déjà pris');
       }
       throw error;
     }
@@ -60,8 +55,7 @@ export class UsersService {
       return result;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002')
-          throw new ConflictException('Ce pseudo est déjà pris');
+        if (error.code === 'P2002') throw new ConflictException('Ce pseudo est déjà pris');
       }
       throw error;
     }

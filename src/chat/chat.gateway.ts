@@ -41,12 +41,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const cleanToken = token.replace('Bearer ', '').trim();
 
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        cleanToken,
-        {
-          secret: process.env.JWT_SECRET || 'AT-SECRET',
-        },
-      );
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(cleanToken, {
+        secret: process.env.JWT_SECRET || 'AT-SECRET',
+      });
 
       client.data.user = payload;
 
@@ -64,10 +61,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('joinChannel')
-  handleJoinChannel(
-    @ConnectedSocket() client: AuthSocket,
-    @MessageBody() channelId: number,
-  ) {
+  handleJoinChannel(@ConnectedSocket() client: AuthSocket, @MessageBody() channelId: number) {
     const roomName = `channel_${channelId}`;
 
     client.join(roomName);
@@ -77,10 +71,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('leaveChannel')
-  handleLeaveChannel(
-    @ConnectedSocket() client: AuthSocket,
-    @MessageBody() channelId: number,
-  ) {
+  handleLeaveChannel(@ConnectedSocket() client: AuthSocket, @MessageBody() channelId: number) {
     const roomName = `channel_${channelId}`;
     client.leave(roomName);
     console.log(`User ${client.data.user?.username} left ${roomName}`);

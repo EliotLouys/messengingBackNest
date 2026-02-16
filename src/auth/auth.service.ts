@@ -61,8 +61,7 @@ export class AuthService {
       where: { id: userId },
     });
 
-    if (!user || !user.hashedRefreshToken)
-      throw new ForbiddenException('Access Denied');
+    if (!user || !user.hashedRefreshToken) throw new ForbiddenException('Access Denied');
 
     const rtMatches = await bcrypt.compare(rt, user.hashedRefreshToken);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
@@ -72,10 +71,7 @@ export class AuthService {
     return tokens;
   }
 
-  async validateUser(
-    username: string,
-    pass: string,
-  ): Promise<Omit<User, 'password' | 'hashedRefreshToken'> | null> {
+  async validateUser(username: string, pass: string): Promise<Omit<User, 'password' | 'hashedRefreshToken'> | null> {
     const user = await this.usersService.findOne(username);
     console.log('tried to login');
     if (user && (await bcrypt.compare(pass, user.password))) {

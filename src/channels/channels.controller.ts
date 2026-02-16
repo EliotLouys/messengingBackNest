@@ -1,21 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  UseGuards,
-  Req,
-  ParseIntPipe,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req, ParseIntPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ChannelsService } from './channels.service';
 import { ChannelDto, MessageDto, ThemeDto } from '../common/dto/channel.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
@@ -56,28 +40,19 @@ export class ChannelsController {
 
   @ApiOperation({ summary: 'Mettre à jour le thème' })
   @Put(':channel_id/update_metadata')
-  updateMetadata(
-    @Body() dto: ThemeDto,
-    @Param('channel_id', ParseIntPipe) channelId: number,
-  ) {
+  updateMetadata(@Body() dto: ThemeDto, @Param('channel_id', ParseIntPipe) channelId: number) {
     return this.channelsService.updateMetadata(dto, channelId);
   }
 
   @ApiOperation({ summary: 'Rejoindre un channel (via URL)' })
   @Put(':channel_id/user/:user_id')
-  joinChannel(
-    @Param('channel_id', ParseIntPipe) channelId: number,
-    @Param('user_id', ParseIntPipe) userId: number,
-  ) {
+  joinChannel(@Param('channel_id', ParseIntPipe) channelId: number, @Param('user_id', ParseIntPipe) userId: number) {
     return this.channelsService.putInChannel(channelId, userId);
   }
 
   @ApiOperation({ summary: "Retirer un user d'un channel" })
   @Delete(':channel_id/user/:user_id')
-  leaveChannel(
-    @Param('channel_id', ParseIntPipe) channelId: number,
-    @Param('user_id', ParseIntPipe) userId: number,
-  ) {
+  leaveChannel(@Param('channel_id', ParseIntPipe) channelId: number, @Param('user_id', ParseIntPipe) userId: number) {
     return this.channelsService.removeFromChannel(channelId, userId);
   }
 

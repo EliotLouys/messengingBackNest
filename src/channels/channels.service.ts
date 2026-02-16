@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ChannelDto, MessageDto, ThemeDto } from '../common/dto/channel.dto';
 import { Prisma } from '@prisma/client';
@@ -172,9 +168,7 @@ export class ChannelsService {
       },
     });
 
-    this.chatGateway.server
-      .to(`channel_${channelId}`)
-      .emit('message', newMessage);
+    this.chatGateway.server.to(`channel_${channelId}`).emit('message', newMessage);
 
     return newMessage;
   }

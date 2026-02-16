@@ -19,10 +19,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Mettre à jour mon profil' })
   @Patch('meta')
-  updateProfile(
-    @Req() req: RequestWithUser,
-    @Body() body: { username: string },
-  ) {
+  updateProfile(@Req() req: RequestWithUser, @Body() body: { username: string }) {
     return this.usersService.update(req.user.id, body);
   }
 }
