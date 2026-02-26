@@ -60,4 +60,22 @@ export class UsersService {
       throw error;
     }
   }
+
+  async findManyByUsernames(usernames: string[]) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        username: {
+          in: usernames,
+        },
+      },
+      // Exclude passwords and sensitive data from the result
+      select: {
+        username: true,
+        display_name: true,
+        img: true,
+        status: true,
+      },
+    });
+    return users;
+  }
 }
