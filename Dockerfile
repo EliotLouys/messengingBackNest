@@ -23,4 +23,4 @@ EXPOSE 3000
 
 # We use the absolute path to the schema. 
 # Prisma always looks for 'migrations' in the same folder as the schema.
-CMD ["sh", "-c", "npx prisma migrate deploy --schema /app/prisma/schema.prisma && node dist/main"]
+CMD ["sh", "-c", "npx prisma db push && node dist/main"]
