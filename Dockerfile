@@ -1,26 +1,26 @@
-# Use Node 22 (matching your GitHub CI setup)
 FROM node:22-alpine
-
 RUN apk add --no-cache openssl
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Install dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy the rest of your application code
+# Copy the prisma directory first to ensure it's in a predictable location
+COPY prisma ./prisma/
+
+# Copy the rest of the source
 COPY . .
 
-# Generate Prisma Client (Required for your database to work)
+# Generate client
 RUN npx prisma generate
 
-# Build the NestJS application
+# Build the NestJS app
 RUN npm run build
 
-# Expose the port your app runs on
 EXPOSE 3000
 
-# Command to run the app in production
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+# We use the absolute path to the schema. 
+# Prisma always looks for 'migrations' in the same folder as the schema.
+CMD ["sh", "-c", "npx prisma migrate deploy --schema /app/prisma/schema.prisma && node dist/main"]
