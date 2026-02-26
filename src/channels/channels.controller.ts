@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ChannelsService } from './channels.service';
-import { ChannelDto, MessageDto, ThemeDto } from '../common/dto/channel.dto';
+import { ChannelDto, MessageDto } from '../common/dto/channel.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import type { RequestWithUser } from '../common/types/express';
 
@@ -38,9 +38,9 @@ export class ChannelsController {
     return this.channelsService.delete(channelId);
   }
 
-  @ApiOperation({ summary: 'Mettre à jour le thème' })
+  @ApiOperation({ summary: 'Mettre à jour les métadonnées' })
   @Put(':channel_id/update_metadata')
-  updateMetadata(@Body() dto: ThemeDto, @Param('channel_id', ParseIntPipe) channelId: number) {
+  updateMetadata(@Body() dto: ChannelDto, @Param('channel_id', ParseIntPipe) channelId: number) {
     return this.channelsService.updateMetadata(dto, channelId);
   }
 

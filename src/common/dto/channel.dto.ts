@@ -2,17 +2,17 @@ import { IsString, IsNotEmpty, IsOptional, ValidateNested } from 'class-validato
 import { Type } from 'class-transformer';
 
 export class ThemeDto {
-  @IsString() @IsNotEmpty() primary_color: string;
-  @IsString() @IsNotEmpty() primary_color_dark: string;
-  @IsString() @IsNotEmpty() accent_color: string;
-  @IsString() @IsNotEmpty() text_color: string;
-  @IsString() @IsNotEmpty() accent_text_color: string;
+  @IsString() @IsNotEmpty() primary_color!: string;
+  @IsString() @IsNotEmpty() primary_color_dark!: string;
+  @IsString() @IsNotEmpty() accent_color!: string;
+  @IsString() @IsNotEmpty() text_color!: string;
+  @IsString() @IsNotEmpty() accent_text_color!: string;
 }
 
 export class ChannelDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsOptional()
@@ -27,9 +27,9 @@ export class ChannelDto {
 export class MessageDto {
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
   @IsString()
   @IsNotEmpty()
-  type: string;
+  type!: string;
 }

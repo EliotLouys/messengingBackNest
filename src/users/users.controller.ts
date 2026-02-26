@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Patch, Body, Post, UseGuards, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import type { RequestWithUser } from '../common/types/express';
@@ -21,5 +21,11 @@ export class UsersController {
   @Patch('meta')
   updateProfile(@Req() req: RequestWithUser, @Body() body: { username: string }) {
     return this.usersService.update(req.user.id, body);
+  }
+
+  @ApiOperation({ summary: 'Récupérer plusieurs profils via leurs usernames' })
+  @Post('batch')
+  getUsersBatch(@Body() body: { usernames: string[] }) {
+    return this.usersService.findManyByUsernames(body.usernames);
   }
 }
