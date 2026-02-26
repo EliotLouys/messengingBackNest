@@ -1,6 +1,8 @@
 # Use Node 22 (matching your GitHub CI setup)
 FROM node:22-alpine
 
+RUN apk add --no-cache openssl
+
 # Set the working directory inside the container
 WORKDIR /app
 
