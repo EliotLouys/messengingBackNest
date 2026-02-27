@@ -42,7 +42,7 @@ jobs:
           test-script: npm run test:cov
           custom-title: Backend coverage report
   build:
-    needs: [format-and-lint]
+    needs: [format-and-lint, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
