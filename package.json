@@ -83,6 +83,11 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coverageReporters": [
+      "text",
+      "text-summary",
+      "json-summary"
+    ]
   }
 }
