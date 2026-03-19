@@ -28,7 +28,7 @@ async function bootstrap() {
 		mkdirSync(uploadDir);
 	}
 
-	app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+	app.use('/uploads', express.static(join(process.cwd(), 'files')));
 
 	console.log('Running on port : 3000');
 	app.enableCors();
