@@ -2,27 +2,37 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
+import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule);
 
-  // 1. Validation Pipe (Standard)
-  app.useGlobalPipes(new ValidationPipe());
+	// 1. Validation Pipe (Standard)
+	app.useGlobalPipes(new ValidationPipe());
 
-  // 2. Configuration Swagger
-  const config = new DocumentBuilder()
-    .setTitle('Messaging API')
-    .setDescription('API de messagerie maison')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+	// 2. Configuration Swagger
+	const config = new DocumentBuilder()
+		.setTitle('Messaging API')
+		.setDescription('API de messagerie maison')
+		.setVersion('1.0')
+		.addBearerAuth()
+		.build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup('swagger', app, document);
 
-  console.log('Running on port : 3000');
-  app.enableCors();
-  await app.listen(3000);
+	const uploadDir = join(process.cwd(), 'files');
+	if (!existsSync(uploadDir)) {
+		mkdirSync(uploadDir);
+	}
+
+	app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+
+	console.log('Running on port : 3000');
+	app.enableCors();
+	await app.listen(3000);
 }
 bootstrap();
 
