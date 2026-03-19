@@ -1,11 +1,9 @@
-name: Build
+name: Format, lint, test and build
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 jobs:
-  format:
+  format-and-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,12 +14,16 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Build
+      - name: Format
         run: npm run format
-      # - name: Commit linted files
-      #   uses: stefanzweifel/git-auto-commit-action@v5
-  lint:
+      - name: Lint
+        run: npm run lint
+  test:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
@@ -31,10 +33,14 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Build
-        run: npm run lint
+      - name: Run tests and collect coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        if: always()
+        with:
+          test-script: npm run test:cov
+          custom-title: Backend coverage report
   build:
-    needs: [format, lint]
+    needs: [format-and-lint, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Prisma Migrate
-        run: npx prisma migrate dev --preview-feature
+        run: npx prisma migrate dev --preview-feature # en mode preview pour tester le build
         env:
           DATABASE_URL: file:./test.db
       - name: Prisma Generate

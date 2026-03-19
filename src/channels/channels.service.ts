@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ChannelDto, MessageDto, ThemeDto } from '../common/dto/channel.dto';
+import { ChannelDto, MessageDto } from '../common/dto/channel.dto';
 import { Prisma } from '@prisma/client';
 import { ChatGateway } from '../chat/chat.gateway';
 
@@ -101,12 +101,18 @@ export class ChannelsService {
     }
   }
 
-  async updateMetadata(dto: ThemeDto, channelId: number) {
+  async updateMetadata(dto: ChannelDto, channelId: number) {
+    // <-- Changed from ThemeDto to ChannelDto
     try {
+      // Stringify the theme if it exists, otherwise keep it null
+      const themeJson = dto.theme ? JSON.stringify(dto.theme) : undefined;
+
       return await this.prisma.channel.update({
         where: { id: channelId },
         data: {
-          theme: JSON.stringify(dto),
+          name: dto.name,
+          img: dto.img,
+          ...(themeJson !== undefined && { theme: themeJson }), // Only update theme if it was provided
         },
       });
     } catch (error) {
@@ -114,11 +120,13 @@ export class ChannelsService {
         if (error.code === 'P2025') {
           throw new NotFoundException(`Le channel n'existe pas`);
         }
+        if (error.code === 'P2002') {
+          throw new ConflictException('Ce nom de channel est déjà pris');
+        }
       }
       throw error;
     }
   }
-
   async putInChannel(channelId: number, userId: number) {
     try {
       return await this.prisma.channelMember.create({
