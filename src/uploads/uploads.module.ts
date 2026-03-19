@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UploadsController } from './uploads.controller';
-import { extname, join } from 'path';
+import { extname } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
-const uploadDir = join(process.cwd(), 'files');
+// const uploadDir = join(process.cwd(), 'files');
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
 @Module({
@@ -13,12 +13,11 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp
 			storage: diskStorage({
 				// specifies the storage destination and file name
 				destination: (req, file, cb) => {
-					cb(null, uploadDir);
+					cb(null, './files');
 				},
 				filename: (req, file, cb) => {
-					// TODO : add username from request to file name
 					const ext = extname(file.originalname);
-					const filename = `${Date.now()}${ext}`;
+					const filename = `${file.originalname}-${Date.now()}${ext}`;
 					cb(null, filename);
 				},
 			}),
