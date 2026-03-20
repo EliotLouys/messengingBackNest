@@ -17,11 +17,23 @@ model User {
   status String @default("I love to code this")
   createdAt DateTime @default(now())
   hashedRefreshToken String?
+  notificationsEnabled Boolean   @default(true) 
+
+  devices              Device[] 
+
   createdChannels Channel[]       @relation("ChannelCreator")
   memberships     ChannelMember[]
   messages        Message[]
 }
 
+model Device {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 model Channel {
   id        Int      @id @default(autoincrement())
   name      String   @unique

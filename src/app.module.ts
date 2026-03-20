@@ -6,16 +6,18 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    PrismaModule,
-    ChannelsModule,
-    AuthModule,
-    UsersModule,
-    ChatModule,
-    UploadsModule,
-  ],
+	imports: [
+		ConfigModule.forRoot({ isGlobal: true }),
+		PrismaModule,
+		ChannelsModule,
+		AuthModule,
+		UsersModule,
+		ChatModule,
+		UploadsModule,
+		NotificationsModule,
+	],
 })
 export class AppModule {}
