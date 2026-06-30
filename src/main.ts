@@ -30,11 +30,10 @@ async function bootstrap() {
 
 	app.use('/uploads', express.static(join(process.cwd(), 'files')));
 
-	console.log('Running on port : 3000');
+	const port = process.env.PORT || 3000;
+	console.log(`Running on port : ${port}`);
+	console.log(`Database URL at runtime: ${process.env.DATABASE_URL}`);
 	app.enableCors();
-	await app.listen(3000);
+	await app.listen(port);
 }
 bootstrap();
-
-// Yes i test
-// test

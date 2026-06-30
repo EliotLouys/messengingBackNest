@@ -25,6 +25,31 @@ export class UsersService {
 				},
 			});
 
+			// Automatically add the user to the "Général" channel (or fallback first channel) if it exists
+			const generalChannel = await this.prisma.channel.findFirst({
+				where: { name: { in: ['Général', 'General', 'general'] } },
+			});
+			if (generalChannel) {
+				await this.prisma.channelMember.create({
+					data: {
+						userId: user.id,
+						channelId: generalChannel.id,
+						role: 'member',
+					},
+				});
+			} else {
+				const firstChannel = await this.prisma.channel.findFirst();
+				if (firstChannel) {
+					await this.prisma.channelMember.create({
+						data: {
+							userId: user.id,
+							channelId: firstChannel.id,
+							role: 'member',
+						},
+					});
+				}
+			}
+
 			const { password, ...result } = user;
 			return result;
 		} catch (error) {

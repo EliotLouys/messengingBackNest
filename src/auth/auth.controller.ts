@@ -1,11 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, HttpCode, HttpStatus, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthCredentialsDto } from '../common/dto/login.dto';
+import { AuthCredentialsDto, RegisterDto } from '../common/dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import type { Request } from 'express'; // Standard Express Request
 import { JwtPayload, JwtPayloadWithRt } from '../common/types/express';
 import { UsersService } from '../users/users.service';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -13,6 +14,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
+    private configService: ConfigService,
   ) {}
 
   @Post('login')
@@ -23,9 +25,16 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() dto: AuthCredentialsDto) {
+  async register(@Body() dto: RegisterDto) {
+    const envCode = this.configService.get<string>('REGISTRATION_CODE');
+    if (envCode && envCode.trim() !== '') {
+      if (!dto.registrationCode || dto.registrationCode.trim() !== envCode.trim()) {
+        throw new ForbiddenException('Code d\'invitation invalide ou manquant');
+      }
+    }
     return this.usersService.create(dto);
   }
+
 
   @ApiOperation({ summary: 'Logout (Supprime le refresh token)' })
   @ApiBearerAuth()

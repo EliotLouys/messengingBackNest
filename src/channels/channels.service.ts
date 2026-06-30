@@ -205,7 +205,7 @@ export class ChannelsService {
 		return newMessage;
 	}
 
-	async getMessages(channelId: number) {
+	async getMessages(channelId: number, skip?: number, take?: number) {
 		const channelExists = await this.prisma.channel.findUnique({
 			where: { id: channelId },
 		});
@@ -213,7 +213,9 @@ export class ChannelsService {
 
 		return await this.prisma.message.findMany({
 			where: { channelId: channelId },
-			orderBy: { createdAt: 'asc' },
+			orderBy: { createdAt: 'desc' },
+			skip: skip,
+			take: take || 40,
 			include: {
 				author: {
 					select: { id: true, username: true },

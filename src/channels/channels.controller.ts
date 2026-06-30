@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ChannelsService } from './channels.service';
 import { ChannelDto, MessageDto } from '../common/dto/channel.dto';
@@ -68,7 +68,13 @@ export class ChannelsController {
 
   @ApiOperation({ summary: "Récupérer l'historique des messages" })
   @Get(':channel_id/messages')
-  getMessages(@Param('channel_id', ParseIntPipe) channelId: number) {
-    return this.channelsService.getMessages(channelId);
+  getMessages(
+    @Param('channel_id', ParseIntPipe) channelId: number,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+  ) {
+    const skipNum = skip ? parseInt(skip, 10) : undefined;
+    const takeNum = take ? parseInt(take, 10) : undefined;
+    return this.channelsService.getMessages(channelId, skipNum, takeNum);
   }
 }
