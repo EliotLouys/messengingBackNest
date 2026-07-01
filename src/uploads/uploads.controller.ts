@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { JwtAuthGuard } from '@/auth/guard';
 import type { MulterFile } from '@/types';
 import { Controller, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
