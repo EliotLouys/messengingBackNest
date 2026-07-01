@@ -167,6 +167,7 @@ export class ChannelsService {
 		const newMessage = await this.prisma.message.create({
 			data: {
 				content: dto.content,
+				type: dto.type || 'Text',
 				channelId: channelId,
 				authorId: authorId,
 			},
