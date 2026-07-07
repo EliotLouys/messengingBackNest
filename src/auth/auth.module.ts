@@ -8,20 +8,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy, RtStrategy } from './strategy';
 
 @Module({
-  imports: [
-    UsersModule,
-    PassportModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '24h' },
-      }),
-    }),
-  ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, RtStrategy],
-  exports: [AuthService],
+	imports: [
+		UsersModule,
+		PassportModule,
+		JwtModule.registerAsync({
+			// JWT tokens provider setup
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (config: ConfigService) => ({
+				secret: config.get<string>('JWT_SECRET'),
+				signOptions: { expiresIn: '24h' },
+			}),
+		}),
+	],
+	controllers: [AuthController],
+	providers: [AuthService, JwtStrategy, RtStrategy],
+	exports: [AuthService],
 })
 export class AuthModule {}
