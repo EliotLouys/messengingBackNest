@@ -1,8 +1,8 @@
 {
 	"name": "messenging-api-nest",
 	"version": "0.0.1",
-	"description": "",
-	"author": "",
+	"description": "A real-time messenging API build with NestJS",
+	"author": "Samuel Léobon & Eliot Louys",
 	"private": true,
 	"license": "UNLICENSED",
 	"scripts": {
