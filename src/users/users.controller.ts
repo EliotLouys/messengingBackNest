@@ -30,7 +30,7 @@ export class UsersController {
 		return this.usersService.findManyByUsernames(body.usernames);
 	}
 
-	@ApiOperation({ summary: "Stocker le push token d'expo en bdd" })
+	@ApiOperation({ summary: "Stocker le push token d'expo en BDD" })
 	@Post('push-token')
 	async addPushToken(@Req() req: RequestWithUser, @Body() body: { token: string }): Promise<Device> {
 		const userId = req.user.id;
@@ -38,7 +38,7 @@ export class UsersController {
 		return this.usersService.addDeviceToken(userId, body.token);
 	}
 
-	@ApiOperation({ summary: "Supprimer le push token d'expo en bdd" })
+	@ApiOperation({ summary: "Supprimer le push token d'expo en BDD" })
 	@Delete('push-token')
 	async removePushToken(@Req() req: RequestWithUser, @Body() body: { token: string }) {
 		const userId = Number(req.user.id);

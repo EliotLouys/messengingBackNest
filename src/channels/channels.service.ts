@@ -103,9 +103,8 @@ export class ChannelsService {
 	}
 
 	async updateMetadata(dto: ChannelDto, channelId: number) {
-		// <-- Changed from ThemeDto to ChannelDto
 		try {
-			// Stringify the theme if it exists, otherwise keep it null
+			// Stringify the theme if it exists
 			const themeJson = dto.theme ? JSON.stringify(dto.theme) : undefined;
 
 			return await this.prisma.channel.update({
@@ -128,6 +127,7 @@ export class ChannelsService {
 			throw error;
 		}
 	}
+
 	async putInChannel(channelId: number, userId: number) {
 		try {
 			return await this.prisma.channelMember.create({
@@ -187,7 +187,7 @@ export class ChannelsService {
 					where: { userId: { not: authorId } },
 					include: {
 						user: {
-							include: { devices: true }, // Nécessite la relation Device dans Prisma
+							include: { devices: true },
 						},
 					},
 				},
@@ -201,7 +201,6 @@ export class ChannelsService {
 				.sendToChannelMembers(recipients, newMessage.author.username, dto.content, channelId)
 				.catch((e) => console.error('Erreur background notifications:', e));
 		}
-		// ---------------------------------------------------------
 
 		return newMessage;
 	}

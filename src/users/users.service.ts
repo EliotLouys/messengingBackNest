@@ -54,7 +54,7 @@ export class UsersService {
 			return result;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				if (error.code === 'P2002') throw new ConflictException('Ce pseudo est déjà pris');
+				if (error.code === 'P2002') throw new ConflictException("Ce nom d'utilisateur est déjà pris");
 			}
 			throw error;
 		}
@@ -80,7 +80,7 @@ export class UsersService {
 			return result;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				if (error.code === 'P2002') throw new ConflictException('Ce pseudo est déjà pris');
+				if (error.code === 'P2002') throw new ConflictException("Ce nom d'utilisateur est déjà pris");
 			}
 			throw error;
 		}
@@ -117,8 +117,6 @@ export class UsersService {
 	}
 
 	async removeDeviceToken(userId: number, token: string) {
-		// deleteMany est plus sûr ici, il garantit qu'on ne supprime le token
-		// QUE s'il appartient bien à l'utilisateur qui fait la requête.
 		return await this.prisma.device.deleteMany({
 			where: {
 				token: token,

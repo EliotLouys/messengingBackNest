@@ -4,8 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
-  imports: [JwtModule], // Nécessaire pour vérifier le token
-  providers: [ChatGateway],
-  exports: [ChatGateway], // On exporte la Gateway pour l'utiliser ailleurs
+	imports: [JwtModule],
+	providers: [ChatGateway],
+	exports: [ChatGateway],
 })
 export class ChatModule {}
