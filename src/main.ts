@@ -10,10 +10,10 @@ import { json, urlencoded } from 'express';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
-	// 1. Validation Pipe (Standard)
+	// Standard validation pipe to validate incoming requests
 	app.useGlobalPipes(new ValidationPipe());
 
-	// 2. Configuration Swagger
+	// Swagger configuration
 	const config = new DocumentBuilder()
 		.setTitle('Messaging API')
 		.setDescription('API de messagerie maison')
@@ -24,7 +24,8 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('swagger', app, document);
 
-	const uploadDir = join(process.cwd(), 'files');
+	// Media uploads directory configuration
+	const uploadDir = join(process.cwd(), process.env.MEDIA_DIR || 'files');
 	if (!existsSync(uploadDir)) {
 		mkdirSync(uploadDir);
 	}
@@ -33,6 +34,7 @@ async function bootstrap() {
 	app.use(json({ limit: '50mb' }));
 	app.use(urlencoded({ extended: true, limit: '50mb' }));
 
+	// Final bootstrapping
 	const port = process.env.PORT || 3000;
 	console.log(`Running on port : ${port}`);
 	console.log(`Database URL at runtime: ${process.env.DATABASE_URL}`);

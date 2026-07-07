@@ -8,7 +8,7 @@ type UserWithDevices = User & { devices: Device[] };
 export class NotificationsService {
 	private readonly logger = new Logger(NotificationsService.name);
 
-	// Ces variables devront être ajoutées au .env de l'API principale
+	// Notifications relay environment variables
 	private readonly relayUrl = process.env.RELAY_URL || 'http://localhost:4000/push';
 	private readonly relaySecret = process.env.RELAY_SECRET;
 
@@ -41,12 +41,12 @@ export class NotificationsService {
 		}
 
 		try {
-			// Envoi de la requête HTTP vers ton serveur Relais
+			// Send messages to the notifications service
 			const response = await fetch(this.relayUrl, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${this.relaySecret}`, // Sécurisation !
+					Authorization: `Bearer ${this.relaySecret}`,
 				},
 				body: JSON.stringify(messages),
 			});

@@ -1,6 +1,6 @@
 name: Publish Docker Image
 
-# This triggers the workflow whenever you push/merge to a release branch
+# Triggers on push or merge to a release/* branch
 on:
   push:
     branches:
@@ -22,8 +22,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # This builds the image using the Dockerfile we discussed earlier
-      # and pushes it to your Docker Hub registry.
+      # Builds the image using the Dockerfile and pushes it to Docker Hub
       - name: Build and push
         uses: docker/build-push-action@v4
         with:

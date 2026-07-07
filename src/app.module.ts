@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AppController } from './app.controller';
 import { AppThrottlerGuard } from './common/guards/app-throttler.guard';
 
 @Module({
@@ -32,6 +33,7 @@ import { AppThrottlerGuard } from './common/guards/app-throttler.guard';
 		UploadsModule,
 		NotificationsModule,
 	],
+	controllers: [AppController],
 	providers: [
 		{
 			provide: APP_GUARD,

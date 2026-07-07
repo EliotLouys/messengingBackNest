@@ -1,20 +1,9 @@
 /* eslint-disable @typescript-eslint/require-await */
- 
+
 import { JwtAuthGuard } from '@/auth/guard';
-import type { MulterFile } from '@/types';
-import {
-	BadRequestException,
-	Body,
-	Controller,
-	Post,
-	Req,
-	UploadedFile,
-	UseGuards,
-	UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { randomBytes, randomUUID } from 'crypto';
+import { BadRequestException, Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { randomUUID } from 'crypto';
 import type { Request } from 'express';
 import { writeFile } from 'fs';
 import path from 'path';
@@ -24,28 +13,8 @@ import path from 'path';
 @Controller('protected/uploads')
 @UseGuards(JwtAuthGuard)
 export class UploadsController {
-	// @Post('/image')
-	// @UseInterceptors(
-	// 	FileInterceptor('file', {
-	// 		limits: { fileSize: Math.pow(1024, 2) * 10 }, // limit image size to 10mb
-	// 	}),
-	// )
-	// async uploadImage(@Req() req: Request, @UploadedFile() file: MulterFile) {
-	// 	const protocol = req.protocol;
-	// 	const host = req.get('host');
-	// 	const baseUrl = `${protocol}://${host}`;
-
-	// 	const filename = randomUUID().replaceAll('-', '');
-	// 	console.log(filename);
-
-	// 	const fileUrl = `${baseUrl}/uploads/${filename}`;
-	// 	console.log(fileUrl);
-	// 	return {
-	// 		url: fileUrl,
-	// 	};
-	// }
-
 	@Post('/image')
+	@ApiOperation({ summary: 'Uploader une image' })
 	async uploadImage(@Req() req: Request, @Body('file') base64String: string) {
 		if (!base64String) {
 			throw new BadRequestException('file payload is required');
