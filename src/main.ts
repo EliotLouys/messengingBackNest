@@ -41,4 +41,4 @@ async function bootstrap() {
 	app.enableCors();
 	await app.listen(port);
 }
-bootstrap();
+void bootstrap();
