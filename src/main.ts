@@ -7,8 +7,11 @@ import { existsSync, mkdirSync } from 'fs';
 import * as express from 'express';
 import { json, urlencoded } from 'express';
 
+import { NestExpressApplication } from '@nestjs/platform-express';
+
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	app.set('trust proxy', true);
 
 	// Standard validation pipe to validate incoming requests
 	app.useGlobalPipes(new ValidationPipe());

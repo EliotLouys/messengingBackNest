@@ -38,7 +38,8 @@ export class UploadsController {
 			console.log('The file has been saved!');
 		});
 
-		const protocol = req.protocol;
+		const forwardedProto = req.headers?.['x-forwarded-proto'];
+		const protocol = (typeof forwardedProto === 'string' ? forwardedProto.split(',')[0] : req.protocol) || 'https';
 		const host = req.get('host');
 		const baseUrl = `${protocol}://${host}`;
 
