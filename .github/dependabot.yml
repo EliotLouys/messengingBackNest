@@ -1,0 +1,78 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+    groups:
+      nestjs:
+        patterns:
+          - "@nestjs/*"
+          - "reflect-metadata"
+          - "rxjs"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
+      auth:
+        patterns:
+          - "passport*"
+          - "@nestjs/passport"
+          - "@nestjs/jwt"
+          - "bcrypt"
+          - "@types/bcrypt"
+          - "@types/passport*"
+      realtime:
+        patterns:
+          - "socket.io"
+          - "socket.io-*"
+          - "engine.io*"
+          - "@nestjs/websockets"
+          - "@nestjs/platform-socket.io"
+      tooling:
+        dependency-type: "development"
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "typescript-eslint"
+          - "@typescript-eslint/*"
+          - "prettier*"
+          - "typescript"
+          - "ts-*"
+          - "jest"
+          - "@types/jest"
+          - "supertest"
+          - "@types/supertest"
+          - "source-map-support"
+      types:
+        dependency-type: "development"
+        patterns:
+          - "@types/*"
+      patch-others:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+
+    # Node types depend on Node.js versions
+    ignore:
+      - dependency-name: "@types/node"
+        update-types:
+          - "version-update:semver-major"
