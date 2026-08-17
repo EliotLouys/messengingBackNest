@@ -1,0 +1,45 @@
+groups:
+  - name: messaging-api
+    rules:
+      - alert: ApiDown
+        expr: up{job="messaging-api"} == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations:
+          summary: 'API injoignable depuis 1 minute'
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_request_duration_seconds_count{status=~"5.."}[5m]))
+          / sum(rate(http_request_duration_seconds_count[5m])) > 0.05
+        for: 5m
+        labels: { severity: critical }
+
+      - alert: HighLatencyP95
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le, route) (rate(http_request_duration_seconds_bucket[5m]))
+          ) > 1
+        for: 10m
+        labels: { severity: warning }
+
+      - alert: EventLoopBlocked
+        expr: nodejs_eventloop_lag_p99_seconds > 0.2
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Boucle d'événements bloquée"
+
+      - alert: PostgresConnectionsSaturated
+        expr: |
+          sum(pg_stat_activity_count) / max(pg_settings_max_connections) > 0.8
+        for: 5m
+        labels: { severity: warning }
+
+      - alert: DiskFillingUp
+        expr: |
+          predict_linear(node_filesystem_avail_bytes{mountpoint="/"}[6h], 4*24*3600) < 0
+        for: 30m
+        labels: { severity: warning }
+        annotations:
+          summary: 'Disque plein sous 4 jours au rythme actuel'
