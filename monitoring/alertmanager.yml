@@ -1,0 +1,46 @@
+global:
+  resolve_timeout: 5m
+  smtp_from: 'alertes@example.com'
+  smtp_smarthost: 'smtp.example.com:587'
+  smtp_auth_username: 'alertes@example.com'
+  smtp_auth_password_file: '/etc/alertmanager/secrets/smtp_password'
+  smtp_require_tls: true
+
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+route:
+  receiver: 'null'
+  group_by: ['alertname', 'job']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+  routes:
+    - receiver: 'mail-critical'
+      matchers:
+        - severity = "critical"
+      group_wait: 10s
+      repeat_interval: 1h
+      continue: false
+
+inhibit_rules:
+  # avoid spamming when API is down
+  - source_matchers: [alertname = "ApiDown"]
+    target_matchers: [job = "messaging-api"]
+    equal: ['job']
+
+  - source_matchers: [severity = "critical"]
+    target_matchers: [severity = "warning"]
+    equal: ['alertname', 'job']
+
+receivers:
+  - name: 'null'
+
+  - name: 'mail-critical'
+    email_configs:
+      - to: 'tenropes.alerts@progsoftwares.com' # EXAMPLE EMAIL ADDRESS
+        send_resolved: true
+        headers:
+          Subject: '[CRITICAL] {{ .GroupLabels.alertname }} — {{ .Alerts.Firing | len }} actives'
+        html: '{{ template "mail.custom.html" . }}'

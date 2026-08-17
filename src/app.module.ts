@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { ChannelsModule } from './channels/channels.module';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +11,9 @@ import { UploadsModule } from './uploads/uploads.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AppController } from './app.controller';
 import { AppThrottlerGuard } from './common/guards/app-throttler.guard';
+import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
+import { ScheduleModule } from '@nestjs/schedule';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
 	imports: [
@@ -25,6 +28,7 @@ import { AppThrottlerGuard } from './common/guards/app-throttler.guard';
 				},
 			],
 		}),
+		ScheduleModule.forRoot(),
 		PrismaModule,
 		ChannelsModule,
 		AuthModule,
@@ -32,12 +36,17 @@ import { AppThrottlerGuard } from './common/guards/app-throttler.guard';
 		ChatModule,
 		UploadsModule,
 		NotificationsModule,
+		MetricsModule,
 	],
 	controllers: [AppController],
 	providers: [
 		{
 			provide: APP_GUARD,
 			useClass: AppThrottlerGuard,
+		},
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: HttpMetricsInterceptor,
 		},
 	],
 })

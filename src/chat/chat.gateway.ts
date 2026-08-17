@@ -10,15 +10,23 @@ import {
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { SocketData, JwtPayload } from '../common/types/express';
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Counter, Gauge } from 'prom-client';
+import { Interval } from '@nestjs/schedule';
 
 type AuthSocket = Socket<any, any, any, SocketData>;
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-	@WebSocketServer()
-	server: Server;
+	@WebSocketServer() server: Server;
 
-	constructor(private readonly jwtService: JwtService) {}
+	constructor(
+		private readonly jwtService: JwtService,
+		@InjectMetric('ws_connections_active')
+		private readonly wsGauge: Gauge<string>,
+		@InjectMetric('ws_disconnects_total')
+		private readonly wsDisconnects: Counter<string>,
+	) {}
 
 	async handleConnection(client: AuthSocket) {
 		try {
@@ -39,6 +47,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				return;
 			}
 
+			this.wsGauge.inc(); // increase websocket connexions counter for Prometheus
+
 			const cleanToken = token.replace('Bearer ', '').trim();
 
 			const payload = await this.jwtService.verifyAsync<JwtPayload>(cleanToken, {
@@ -57,6 +67,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleDisconnect(client: AuthSocket) {
 		if (client.data.user) {
 			console.log(`WS Disconnected: ${client.data.user.username}`);
+			this.wsGauge.dec(); // decrease websocket connexions counter for Prometheus
+			this.wsDisconnects.inc({ reason: 'client_closed' }); // add disconnect reason to Prometheus counter
 		}
 	}
 
@@ -75,5 +87,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const roomName = `channel_${channelId}`;
 		void client.leave(roomName);
 		console.log(`User ${client.data.user?.username} left ${roomName}`);
+	}
+
+	@Interval(30_000)
+	resyncGauge() {
+		this.wsGauge.set(this.server?.sockets?.sockets?.size ?? 0);
 	}
 }
